@@ -1,3 +1,10 @@
+import { useEffect } from "react";
+import { getProducts } from "../services/productService";
+
 export default function Home() {
-    return <h1>Home Placeholder</h1>
+  useEffect(() => {
+    getProducts().then((data) => console.log(data));
+  }, []);
+
+  return <h1>Inicio</h1>;
 }
