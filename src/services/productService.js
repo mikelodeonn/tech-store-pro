@@ -24,3 +24,8 @@ export async function searchProducts(query) {
   const data = await request(`/products/search?q=${encodeURIComponent(query)}`);
   return data.products.map(mapProduct);
 }
+
+export async function getfeaturedProducts (limit = 8) {
+  const data = await request(`/products?sortBy=rating&order=desc&limit=${limit}`);
+  return data.products.map(mapProduct);
+}
