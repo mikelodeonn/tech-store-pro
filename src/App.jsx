@@ -1,121 +1,132 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+import { useEffect, useState } from 'react'
+import { Link, Route, Routes } from 'react-router-dom'
+import ProductDetailPage from './pages/ProductDetailPage.jsx'
+import { obtenerProductosDestacados } from './services/dummyService'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+const formatoPrecio = new Intl.NumberFormat('es-MX', {
+  style: 'currency',
+  currency: 'USD',
+})
+
+function ProductoCard({ producto }) {
+  return (
+    <Link className="product-card" to={`/producto/${producto.id}`}>
+      <div className="product-image-wrap">
+        {producto.descuento > 0 && (
+          <span className="discount-badge">-{Math.round(producto.descuento)}%</span>
+        )}
+        <img src={producto.imagen} alt={producto.nombre} loading="lazy" />
+      </div>
+      <div className="product-info">
+        <span className="product-category">{producto.categoria.replaceAll('-', ' ')}</span>
+        <h3>{producto.nombre}</h3>
+        <div className="product-rating" aria-label={`Calificación ${producto.calificacion} de 5`}>
+          <span aria-hidden="true">★</span> {producto.calificacion.toFixed(1)}
+        </div>
+        <div className="product-price-row">
+          <strong>{formatoPrecio.format(producto.precio)}</strong>
+          <span className="view-product" aria-hidden="true">→</span>
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+function HomePage() {
+  const [productos, setProductos] = useState([])
+  const [cargando, setCargando] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    let activo = true
+
+    obtenerProductosDestacados(8)
+      .then((productosDestacados) => {
+        if (activo) setProductos(productosDestacados)
+      })
+      .catch((errorConsulta) => {
+        if (activo) setError(errorConsulta.message || 'No se pudieron cargar los productos.')
+      })
+      .finally(() => {
+        if (activo) setCargando(false)
+      })
+
+    return () => {
+      activo = false
+    }
+  }, [])
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="storefront">
+      <div className="announcement">Tecnología para todos · Envíos a todo México</div>
+      <header className="site-header">
+        <a className="brand" href="#inicio" aria-label="TechStore, inicio">
+          <span className="brand-mark">T</span> tech<span>store</span>
+        </a>
+        <nav className="main-nav" aria-label="Navegación principal">
+          <a href="#inicio">Inicio</a>
+          <a href="#productos">Productos</a>
+          <a href="#categorias">Categorías</a>
+        </nav>
+        <a className="cart-link" href="#productos">Ver productos <span aria-hidden="true">→</span></a>
+      </header>
 
-      <div className="ticks"></div>
+      <main>
+        <section className="hero-banner" id="inicio">
+          <div className="hero-copy">
+            <span className="eyebrow">TECNOLOGÍA PARA TU DÍA A DÍA</span>
+            <h1>Lo último en tecnología, <span>a tu alcance.</span></h1>
+            <p>Encuentra tus gadgets favoritos y dale un upgrade a tu mundo.</p>
+            <a className="primary-button" href="#productos">Explorar productos <span aria-hidden="true">→</span></a>
+          </div>
+          <div className="hero-art" aria-hidden="true">
+            <div className="art-orbit orbit-one" />
+            <div className="art-orbit orbit-two" />
+            <div className="art-glow" />
+            <div className="phone-art"><div className="phone-screen"><span>TECH</span><i /></div></div>
+            <div className="art-chip chip-one">✦</div>
+            <div className="art-chip chip-two">◉</div>
+          </div>
+        </section>
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        <section className="benefits" id="categorias" aria-label="Beneficios de la tienda">
+          <div><span className="benefit-icon">↗</span><span><strong>Envíos a todo México</strong><small>Rápidos y seguros</small></span></div>
+          <div><span className="benefit-icon">◇</span><span><strong>Compra protegida</strong><small>Tu seguridad primero</small></span></div>
+          <div><span className="benefit-icon">♡</span><span><strong>Atención personalizada</strong><small>Estamos para ayudarte</small></span></div>
+        </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+        <section className="featured-section" id="productos">
+          <div className="section-heading">
+            <div><span className="eyebrow">SELECCIÓN TECHSTORE</span><h2>Productos destacados</h2></div>
+            <a href="#productos" className="text-link">Ver todos <span aria-hidden="true">→</span></a>
+          </div>
+
+          {cargando && <p className="feedback-message" role="status">Cargando productos destacados…</p>}
+          {!cargando && error && <p className="feedback-message error-message" role="alert">{error}</p>}
+          {!cargando && !error && productos.length === 0 && (
+            <p className="feedback-message">No hay productos disponibles por el momento.</p>
+          )}
+          {!cargando && !error && productos.length > 0 && (
+            <div className="product-grid">
+              {productos.map((producto) => <ProductoCard key={producto.id} producto={producto} />)}
+            </div>
+          )}
+        </section>
+      </main>
+
+      <footer className="site-footer"><a className="brand" href="#inicio"><span className="brand-mark">T</span> tech<span>store</span></a><span>Tu próximo gadget está aquí.</span></footer>
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/producto/:id" element={<ProductDetailPage />} />
+      <Route path="*" element={<HomePage />} />
+    </Routes>
   )
 }
 
