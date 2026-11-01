@@ -29,3 +29,8 @@ export async function getfeaturedProducts (limit = 8) {
   const data = await request(`/products?sortBy=rating&order=desc&limit=${limit}`);
   return data.products.map(mapProduct);
 }
+
+export async function getAllProducts() {
+  const data = await request("/products");
+  return data.products.map(mapProduct);
+}
