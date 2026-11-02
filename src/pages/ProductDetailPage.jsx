@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { obtenerProductoPorId } from '../services/dummyService'
+import { useCart } from '../context/CartContext.jsx'
 
 const formatoPrecio = new Intl.NumberFormat('es-MX', {
   style: 'currency',
@@ -8,6 +9,7 @@ const formatoPrecio = new Intl.NumberFormat('es-MX', {
 })
 
 function StoreHeader() {
+  const cart = useCart()
   return (
     <>
       <div className="announcement">Tecnología para todos · Envíos a todo México</div>
@@ -20,12 +22,14 @@ function StoreHeader() {
           <Link to="/#productos">Productos</Link>
         </nav>
         <Link className="cart-link" to="/#productos">Ver productos <span aria-hidden="true">→</span></Link>
+        <Link className="cart-link" to="/carrito">Carrito ({cart.cantidad})</Link>
       </header>
     </>
   )
 }
 
 function ProductDetailPage() {
+  const cart = useCart()
   const { id } = useParams()
   const [producto, setProducto] = useState(null)
   const [cargando, setCargando] = useState(true)
@@ -111,6 +115,7 @@ function ProductDetailPage() {
               <div className="detail-price">{formatoPrecio.format(producto.precio)}</div>
               <p className="detail-stock">{producto.existencias > 0 ? 'Disponible para envío' : 'Agotado'}</p>
               <Link className="detail-continue-link" to="/#productos">Seguir explorando productos <span aria-hidden="true">→</span></Link>
+              <button className="checkout-button detail-add-button" type="button" disabled={!producto.existencias} onClick={() => cart.agregar(producto)}>{producto.existencias ? 'Agregar al carrito' : 'Agotado'}</button>
               <div className="detail-promises">
                 <div><span aria-hidden="true">↗</span><span><strong>Envío a todo México</strong><small>Consulta cobertura al comprar</small></span></div>
                 <div><span aria-hidden="true">◇</span><span><strong>Compra protegida</strong><small>Pago seguro y confiable</small></span></div>

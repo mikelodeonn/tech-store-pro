@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link, Route, Routes } from 'react-router-dom'
 import ProductDetailPage from './pages/ProductDetailPage.jsx'
+import CartPage from './pages/CartPage.jsx'
+import CheckoutPage from './pages/CheckoutPage.jsx'
+import { CartProvider, useCart } from './context/CartContext.jsx'
 import { obtenerProductosDestacados } from './services/dummyService'
 import './App.css'
 
@@ -10,8 +13,10 @@ const formatoPrecio = new Intl.NumberFormat('es-MX', {
 })
 
 function ProductoCard({ producto }) {
+  const cart = useCart()
   return (
-    <Link className="product-card" to={`/producto/${producto.id}`}>
+    <article className="product-card">
+    <Link className="product-card-link" to={`/producto/${producto.id}`}>
       <div className="product-image-wrap">
         {producto.descuento > 0 && (
           <span className="discount-badge">-{Math.round(producto.descuento)}%</span>
@@ -30,10 +35,13 @@ function ProductoCard({ producto }) {
         </div>
       </div>
     </Link>
+    <button className="catalog-add-button" type="button" disabled={!producto.existencias} onClick={() => cart.agregar(producto)}>{producto.existencias ? 'Agregar al carrito' : 'Agotado'}</button>
+    </article>
   )
 }
 
 function HomePage() {
+  const cart = useCart()
   const [productos, setProductos] = useState([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
@@ -69,7 +77,7 @@ function HomePage() {
           <a href="#productos">Productos</a>
           <a href="#categorias">Categorías</a>
         </nav>
-        <a className="cart-link" href="#productos">Ver productos <span aria-hidden="true">→</span></a>
+        <Link className="cart-link" to="/carrito">Carrito ({cart.cantidad})</Link>
       </header>
 
       <main>
@@ -122,11 +130,15 @@ function HomePage() {
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/producto/:id" element={<ProductDetailPage />} />
-      <Route path="*" element={<HomePage />} />
-    </Routes>
+    <CartProvider>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/producto/:id" element={<ProductDetailPage />} />
+        <Route path="/carrito" element={<CartPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="*" element={<HomePage />} />
+      </Routes>
+    </CartProvider>
   )
 }
 
