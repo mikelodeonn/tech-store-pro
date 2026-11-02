@@ -1,8 +1,10 @@
 import { Outlet, NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 
 export default function MainLayout() {
   const { isAuthenticated, logout } = useAuth();
+  const { totalItems } = useCart();
   return (
     <>
       {isAuthenticated ? (
@@ -22,6 +24,7 @@ export default function MainLayout() {
       <main>
         <Outlet />
       </main>
+      <NavLink to="/carrito">Carrito ({totalItems})</NavLink>
       <footer>© TechStore</footer>
     </>
   );

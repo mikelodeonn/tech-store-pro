@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getProductById } from "../services/productService";
+import { useCart } from "../context/CartContext";
 
 export default function ProductDetail() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { addItem } = useCart();
 
   useEffect(() => {
     setLoading(true);
@@ -33,6 +35,7 @@ export default function ProductDetail() {
           <p>{product.description}</p>
         </div>
       </div>
+      <button onClick={() => addItem(product)}>Agregar al carrito</button>
     </section>
   );
 }

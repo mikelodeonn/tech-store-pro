@@ -6,6 +6,7 @@ import NotFound from "../pages/NotFound";
 import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Account from "../pages/Account";
+import Cart from "../pages/Cart";
 import ProtectedRoute from "../components/ProtectedRoute";      
 
 export const router = createBrowserRouter([
@@ -22,6 +23,7 @@ export const router = createBrowserRouter([
       { path: "productos", element: <Products /> },
       { path: "productos/:id", element: <ProductDetail /> },
       { path: "*", element: <NotFound /> },
+      {path: "carrito", element: <Cart />},
     ],
   },
 ]);
