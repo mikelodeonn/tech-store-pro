@@ -31,6 +31,6 @@ export async function getfeaturedProducts (limit = 8) {
 }
 
 export async function getAllProducts() {
-  const data = await request("/products");
+  const data = await request("/products?limit=0");
   return data.products.map(mapProduct);
 }
