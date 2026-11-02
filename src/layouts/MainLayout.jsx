@@ -2,7 +2,11 @@ import { Outlet, NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 
+// Componente que representa el diseño principal de la aplicación. 
 export default function MainLayout() {
+  // Obtiene el estado de autenticación y la función de cierre de sesión del contexto de autenticación, así como 
+  // el número total de artículos en el carrito del contexto del carrito. Renderiza los enlaces de navegación 
+  // según el estado de autenticación y muestra el número total de artículos en el carrito.
   const { isAuthenticated, logout } = useAuth();
   const { totalItems } = useCart();
   return (

@@ -4,6 +4,10 @@ import { useAuth } from "../context/AuthContext";
 import { getCurrentUser } from "../services/authService";
 
 export default function Account() {
+  // Obtiene el token y la información del usuario del contexto de autenticación, así como la función de cierre de sesión. 
+  // Mantiene el estado del usuario y el error. Al montar el componente, llama a la función para obtener la información del 
+  // usuario actual con el token. Si tiene éxito, actualiza el estado del usuario; si falla, muestra un mensaje de error o 
+  // cierra sesión si la sesión ha vencido.
   const { token, user: cachedUser, logout } = useAuth();
   const [user, setUser] = useState(cachedUser);
   const [error, setError] = useState(null);

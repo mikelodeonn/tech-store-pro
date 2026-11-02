@@ -7,7 +7,9 @@ import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Account from "../pages/Account";
 import Cart from "../pages/Cart";
-import ProtectedRoute from "../components/ProtectedRoute";      
+import Checkout from "../pages/Checkout";
+import OrderConfirmation from "../pages/OrderConfirmation";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 export const router = createBrowserRouter([
   {
@@ -17,13 +19,17 @@ export const router = createBrowserRouter([
       { path: "login", element: <Login /> },
       {
         element: <ProtectedRoute />,
-        children: [{ path: "mi-cuenta", element: <Account /> }],
+        children: [
+          { path: "mi-cuenta", element: <Account /> },
+          { path: "checkout", element: <Checkout /> },
+        ],
       },
       { index: true, element: <Home /> },
       { path: "productos", element: <Products /> },
       { path: "productos/:id", element: <ProductDetail /> },
       { path: "*", element: <NotFound /> },
-      {path: "carrito", element: <Cart />},
+      { path: "carrito", element: <Cart /> },
+      { path: "confirmacion", element: <OrderConfirmation /> },
     ],
   },
 ]);

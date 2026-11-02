@@ -2,6 +2,9 @@ import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { formatPrice } from "../utils/format";
 
+// Componente que representa la página del carrito de compras. Muestra los artículos en el carrito, permite 
+// aumentar o disminuir la cantidad de cada artículo, eliminar artículos individuales o vaciar el carrito por 
+// completo. También muestra el total del carrito y un enlace para ir al catálogo de productos si el carrito está vacío.
 export default function Cart() {
   const { items, total, totalItems, increase, decrease, removeItem, clearCart } = useCart();
 
@@ -45,6 +48,7 @@ export default function Cart() {
       </ul>
 
       <p className="cart-total">Total: <strong>{formatPrice(total)}</strong></p>
+      <Link to="/checkout">Proceder al pago</Link>
       <button onClick={clearCart}>Vaciar carrito</button>
     </section>
   );

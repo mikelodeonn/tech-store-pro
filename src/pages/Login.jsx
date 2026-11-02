@@ -4,6 +4,10 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
+
+  // Obtiene las funciones de inicio de sesión y el estado de autenticación del contexto, así como las funciones de 
+  // navegación y la ubicación actual de la ruta. Define el destino al que se redirigirá después de iniciar sesión,
+  // que es la ruta desde la que se intentó acceder a la página protegida o la página de "mi-cuenta" por defecto.
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -16,6 +20,9 @@ export default function Login() {
 
   if (isAuthenticated) return <Navigate to={from} replace />;
 
+  // Función que maneja el envío del formulario de inicio de sesión. Evita el comportamiento por defecto del formulario,
+  // limpia el error y establece el estado de envío. Llama a la función de inicio de sesión del contexto con el nombre de usuario y la contraseña, y redirige a la ruta de destino si tiene éxito. Si falla, muestra un mensaje de error
+  // según el código de estado del error. Finalmente, restablece el estado de envío.
   async function handleSubmit(e) {
     e.preventDefault();
     setError(null);
