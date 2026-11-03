@@ -14,59 +14,72 @@ function loadCart() {
   }
 }
 
-// Función reductora que maneja las acciones del carrito de compras. Recibe el estado actual del carrito y una acción, y 
+// Función reductora que maneja las acciones del carrito de compras. Recibe el estado actual del carrito y una acción, y
 // devuelve el nuevo estado del carrito según el tipo de acción.
 function cartReducer(items, action) {
   switch (action.type) {
     // Agrega un producto al carrito. Si el producto ya existe, aumenta su cantidad en 1; si no, lo agrega con cantidad 1.
-    case "ADD": {
-      const p = action.product;
-      const existing = items.find((i) => i.id === p.id);
-      if (existing) {
-        return items.map((i) =>
-          i.id === p.id ? { ...i, quantity: i.quantity + 1 } : i
-        );
+    case "ADD":
+      {
+        const p = action.product;
+        const existing = items.find((i) => i.id === p.id);
+        if (existing) {
+          // Si el producto ya existe, aumenta su cantidad en 1, pero no permite que la cantidad sea mayor al stock disponible.
+          return items.map((i) =>
+            i.id === p.id ? { ...i, quantity: Math.min(i.quantity + 1, i.stock)  } : i,
+          );
+        }
+
+        return [
+          ...items,
+          {
+            id: p.id,
+            title: p.title,
+            price: p.price,
+            thumbnail: p.thumbnail,
+            quantity: 1,
+            stock: p.stock,
+          },
+        ];
       }
-      return [
-        ...items,
-        { id: p.id, title: p.title, price: p.price, thumbnail: p.thumbnail, quantity: 1 },
-      ];
-    }
-    // Aumenta la cantidad de un producto en el carrito en 1.
-    case "INCREASE":
+
+      // Aumenta la cantidad de un producto en el carrito en 1, pero no permite que la cantidad sea mayor al stock disponible.   
+      case "INCREASE":
       return items.map((i) =>
-        i.id === action.id ? { ...i, quantity: i.quantity + 1 } : i
+        i.id === action.id
+          ? { ...i, quantity: Math.min(i.quantity + 1, i.stock) }
+          : i,
       );
-      // Disminuye la cantidad de un producto en el carrito en 1, pero no permite que la cantidad sea menor a 1.
+    // Disminuye la cantidad de un producto en el carrito en 1, pero no permite que la cantidad sea menor a 1.
     case "DECREASE":
       return items.map((i) =>
-        i.id === action.id && i.quantity > 1 ? { ...i, quantity: i.quantity - 1 } : i
+        i.id === action.id && i.quantity > 1
+          ? { ...i, quantity: i.quantity - 1 }
+          : i,
       );
-      // Elimina un producto del carrito según su id.
+    // Elimina un producto del carrito según su id.
     case "REMOVE":
       return items.filter((i) => i.id !== action.id);
-      // Limpia el carrito, devolviendo un array vacío.
+    // Limpia el carrito, devolviendo un array vacío.
     case "CLEAR":
       return [];
-      // Si la acción no coincide con ningún caso, devuelve el estado actual del carrito sin cambios.
+    // Si la acción no coincide con ningún caso, devuelve el estado actual del carrito sin cambios.
     default:
       return items;
   }
 }
 
-// Componente que provee el contexto del carrito  a los componentes hijos. 
+// Componente que provee el contexto del carrito  a los componentes hijos.
 export function CartProvider({ children }) {
   // Mantiene el estado del carrito usando un reductor y carga el carrito desde el localStorage al montar el componente.
   const [items, dispatch] = useReducer(cartReducer, [], loadCart);
 
-  // Guarda el carrito en el localStorage cada vez que cambia el estado del carrito. Si falla, el carrito sigue funcionando 
+  // Guarda el carrito en el localStorage cada vez que cambia el estado del carrito. Si falla, el carrito sigue funcionando
   // en memoria.
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-    } catch {
-      
-    }
+    } catch {}
   }, [items]);
 
   // Calcula el número total de artículos y el total del carrito sumando las cantidades y los precios de los productos.

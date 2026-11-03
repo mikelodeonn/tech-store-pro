@@ -227,6 +227,12 @@
 .account-logout { margin-top: 16px; }
 .not-found h1 { margin: 0; font-size: clamp(32px, 5vw, 42px); font-weight: 900; letter-spacing: -.06em; }
 
+
+.stock-badge { font-size: 0.85rem; font-weight: 600; margin: 0.25rem 0; }
+.stock-low { color: #b26a00; }
+.stock-out { color: #c62828; }
+.product-card button:disabled { opacity: 0.5; cursor: not-allowed; }
+
 @media (min-width: 540px) {
   .site-main { padding-block: 48px 64px; }
   .site-footer__inner { flex-direction: row; align-items: center; }

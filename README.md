@@ -13,6 +13,8 @@ Tienda en línea hecha con React, React Router y la API de DummyJSON.
 
 npm install
 npm run dev
+npm install tailwindcss @tailwindcss/vite
+
 
 ## Rutas
 

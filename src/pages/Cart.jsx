@@ -32,6 +32,7 @@ export default function Cart() {
       <div className="cart-layout">
         <ul className="cart-list">
           {items.map((item) => (
+            console.log(item.title, "qty:", item.quantity, "stock:", item.stock),
             <li key={item.id} className="cart-item">
               <Link to={`/productos/${item.id}`} className="cart-item__image-link">
                 <img src={item.thumbnail} alt={item.title} />
@@ -39,11 +40,11 @@ export default function Cart() {
               <div className="cart-item__description">
                 <Link to={`/productos/${item.id}`} className="cart-item__title">{item.title}</Link>
                 <p>{formatPrice(item.price)} c/u</p>
-              </div>
+              </div>  
               <div className="quantity-control">
                 <button onClick={() => decrease(item.id)} disabled={item.quantity === 1} aria-label="Disminuir cantidad"><Minus size={14} /></button>
                 <span>{item.quantity}</span>
-                <button onClick={() => increase(item.id)} aria-label="Aumentar cantidad"><Plus size={14} /></button>
+                <button onClick={() => increase(item.id)} disabled={item.quantity >= item.stock} aria-label="Aumentar cantidad"><Plus size={14} /></button>
               </div>
               <p className="cart-item__total">{formatPrice(item.price * item.quantity)}</p>
               <button onClick={() => removeItem(item.id)} aria-label={`Eliminar ${item.title}`} className="remove-item"><Trash2 size={16} /></button>

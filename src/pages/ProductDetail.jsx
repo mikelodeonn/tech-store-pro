@@ -4,13 +4,14 @@ import { ArrowLeft, Check, PackageCheck, ShieldCheck, ShoppingBag, Star } from "
 import { getProductById } from "../services/productService";
 import { useCart } from "../context/CartContext";
 import { formatPrice } from "../utils/format";
+import { getStockStatus } from "../utils/stock";
 
 export default function ProductDetail() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { addItem } = useCart();
+  const { items, addItem } = useCart();
 
   useEffect(() => {
     setLoading(true);
@@ -23,6 +24,17 @@ export default function ProductDetail() {
   if (loading) return <div className="notice">Cargando producto…</div>;
   if (error) return <div className="notice notice--error">No pudimos cargar el producto: {error}</div>;
   if (!product) return null;
+
+  const inCart = items.find((i) => i.id === product.id)?.quantity ?? 0;
+  const stockStatus = getStockStatus(product.stock);
+  const isOut = stockStatus.key === "out";
+  const maxReached = !isOut && inCart >= product.stock;
+
+  const buttonLabel = isOut
+    ? "No disponible"
+    : maxReached
+    ? "Máximo en carrito"
+    : "Agregar al carrito";
 
   return (
     <section className="product-detail">
@@ -40,13 +52,27 @@ export default function ProductDetail() {
           <div className="product-detail__rating">
             <span><Star size={15} /> {product.rating}</span>
             <span className="product-detail__separator">·</span>
-            <span>{product.stock > 0 ? `${product.stock} disponibles` : "Agotado"}</span>
+            <span>{isOut ? "Agotado" : "Disponible"}</span>
           </div>
           <p className="product-detail__price">{formatPrice(product.price)}</p>
           <p className="product-detail__description">{product.description}</p>
-          <button onClick={() => addItem(product)} className="button button--primary product-detail__add">
-            <ShoppingBag size={18} /> Agregar al carrito
+
+          <button
+            onClick={() => addItem(product)}
+            disabled={isOut || maxReached}
+            className="button button--primary product-detail__add"
+          >
+            <ShoppingBag size={18} /> {buttonLabel}
           </button>
+
+          {isOut && <p className="stock-out">Este producto no está disponible por ahora.</p>}
+          {!isOut && stockStatus.key === "low" && (
+            <p className="stock-low">{stockStatus.label}</p>
+          )}
+          {maxReached && (
+            <p className="stock-low">Ya tienes todas las unidades disponibles en tu carrito.</p>
+          )}
+
           <div className="product-detail__benefits">
             <div><PackageCheck size={19} /><span>Envío a todo México</span></div>
             <div><ShieldCheck size={19} /><span>Compra segura</span></div>
