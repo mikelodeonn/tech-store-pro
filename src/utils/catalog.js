@@ -1,8 +1,10 @@
+import { getFinalPrice } from "./pricing";
+
 export const PAGE_SIZE = 12;
 
 const sorters = {
-  "price-asc": (a, b) => a.price - b.price,
-  "price-desc": (a, b) => b.price - a.price,
+  "price-asc": (a, b) => getFinalPrice(a) - getFinalPrice(b),
+  "price-desc": (a, b) => getFinalPrice(b) - getFinalPrice(a),
   "name-asc": (a, b) => a.title.localeCompare(b.title),
   "name-desc": (a, b) => b.title.localeCompare(a.title),
 };

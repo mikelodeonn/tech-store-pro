@@ -3,6 +3,7 @@ import { ArrowUpRight, ShoppingBag, Star } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { formatPrice } from "../utils/format";
 import { getStockStatus } from "../utils/stock";
+import { getFinalPrice, getDiscountLabel, hasDiscount } from "../utils/pricing";
 
 export default function ProductCard({ product }) {
   const { items, addItem } = useCart();
@@ -50,7 +51,15 @@ export default function ProductCard({ product }) {
         </Link>
 
         <div className="product-card__purchase-row">
-          <p className="product-card__price">{formatPrice(product.price)}</p>
+          <div className="price-block price-block--card">
+            <p className="product-card__price">{formatPrice(getFinalPrice(product))}</p>
+            {hasDiscount(product) && (
+              <>
+                <span className="price-original">{formatPrice(product.price)}</span>
+                <span className="discount-badge">{getDiscountLabel(product)}</span>
+              </>
+            )}
+          </div>
 
           <button
             onClick={() => addItem(product)}
