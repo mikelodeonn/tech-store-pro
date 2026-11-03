@@ -7,7 +7,7 @@ import { formatPrice } from "../utils/format";
 // aumentar o disminuir la cantidad de cada artículo, eliminar artículos individuales o vaciar el carrito por 
 // completo. También muestra el total del carrito y un enlace para ir al catálogo de productos si el carrito está vacío.
 export default function Cart() {
-  const { items, total, totalItems, increase, decrease, removeItem, clearCart } = useCart();
+  const { items, total, totalItems, savings, increase, decrease, removeItem, clearCart } = useCart();
 
   if (items.length === 0) {
     return (
@@ -32,7 +32,6 @@ export default function Cart() {
       <div className="cart-layout">
         <ul className="cart-list">
           {items.map((item) => (
-            console.log(item.title, "qty:", item.quantity, "stock:", item.stock),
             <li key={item.id} className="cart-item">
               <Link to={`/productos/${item.id}`} className="cart-item__image-link">
                 <img src={item.thumbnail} alt={item.title} />
@@ -57,7 +56,8 @@ export default function Cart() {
           <div className="cart-summary__line"><span>Envío</span><span className="cart-summary__shipping">Se calcula al finalizar</span></div>
           <div className="cart-summary__divider" />
           <div className="cart-summary__total"><span>Total</span><strong>{formatPrice(total)}</strong></div>
-          <button className="button button--primary cart-summary__checkout">Continuar compra <ArrowRight size={16} /></button>
+          {savings > 0 && <p className="cart-savings">Ahorraste {formatPrice(savings)}</p>}
+          <button onClick={clearCart} className="button button--primary cart-summary__checkout">Continuar compra <ArrowRight size={16} /></button>
           <p className="cart-summary__security"><ShieldCheck size={15} /> Tus datos están protegidos</p>
           <button onClick={clearCart} className="cart-summary__clear">Vaciar carrito</button>
         </aside>

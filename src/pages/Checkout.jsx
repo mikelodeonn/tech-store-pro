@@ -11,7 +11,7 @@ function createOrderId() {
 }
 
 export default function Checkout() {
-  const { items, total, clearCart } = useCart();
+  const { items, total, savings, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const orderPlaced = useRef(false);
@@ -148,6 +148,7 @@ export default function Checkout() {
             ))}
           </ul>
           <p className="cart-total">Total: <strong>{formatPrice(total)}</strong></p>
+          {savings > 0 && <p className="cart-savings">Ahorraste {formatPrice(savings)}</p>}
         </aside>
       </div>
     </section>

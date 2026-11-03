@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
+import { getFinalPrice } from "../utils/pricing";
 
 // Contexto de carrito de compras que usa una clave para guardar y leer en localStorage; y un contenedor global
 const STORAGE_KEY = "cart";
@@ -8,7 +9,13 @@ const CartContext = createContext(null);
 function loadCart() {
   try {
     const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    return Array.isArray(data) ? data : [];
+    if (!Array.isArray(data)) return [];
+    return data.filter(
+      (item) => Number.isFinite(item.quantity)
+        && item.quantity > 0
+        && Number.isFinite(item.price)
+        && Number.isFinite(item.originalPrice),
+    );
   } catch {
     return [];
   }
@@ -35,7 +42,8 @@ function cartReducer(items, action) {
           {
             id: p.id,
             title: p.title,
-            price: p.price,
+            price: getFinalPrice(p),
+            originalPrice: p.price,
             thumbnail: p.thumbnail,
             quantity: 1,
             stock: p.stock,
@@ -85,6 +93,10 @@ export function CartProvider({ children }) {
   // Calcula el número total de artículos y el total del carrito sumando las cantidades y los precios de los productos.
   const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
   const total = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  const savings = items.reduce(
+    (sum, i) => sum + (i.originalPrice - i.price) * i.quantity,
+    0,
+  );
 
   // Valor del contexto que se provee a los componentes hijos. Contiene el array de artículos, el número total de artículos,
   // el total del carrito y las funciones para agregar, aumentar, disminuir, eliminar y limpiar artículos.
@@ -92,6 +104,7 @@ export function CartProvider({ children }) {
     items,
     totalItems,
     total,
+    savings,
     addItem: (product) => dispatch({ type: "ADD", product }),
     increase: (id) => dispatch({ type: "INCREASE", id }),
     decrease: (id) => dispatch({ type: "DECREASE", id }),

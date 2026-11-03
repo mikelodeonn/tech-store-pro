@@ -42,3 +42,7 @@ npm install tailwindcss @tailwindcss/vite
 - `getAllProducts()`
 
 Nota:Readme temporal
+
+## Precios con descuento
+
+En los productos, `price` conserva el precio original y `discountPercentage` indica el descuento. En el carrito, `price` contiene el precio final y `originalPrice` conserva el precio original para calcular el ahorro.

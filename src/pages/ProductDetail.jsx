@@ -5,6 +5,8 @@ import { getProductById } from "../services/productService";
 import { useCart } from "../context/CartContext";
 import { formatPrice } from "../utils/format";
 import { getStockStatus } from "../utils/stock";
+import { getFinalPrice, getDiscountLabel, hasDiscount } from "../utils/pricing";
+import ProductReviews from "../components/ProductReviews";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -54,7 +56,15 @@ export default function ProductDetail() {
             <span className="product-detail__separator">·</span>
             <span>{isOut ? "Agotado" : "Disponible"}</span>
           </div>
-          <p className="product-detail__price">{formatPrice(product.price)}</p>
+          <div className="price-block price-block--detail">
+            <p className="product-detail__price">{formatPrice(getFinalPrice(product))}</p>
+            {hasDiscount(product) && (
+              <>
+                <span className="price-original">{formatPrice(product.price)}</span>
+                <span className="discount-badge">{getDiscountLabel(product)}</span>
+              </>
+            )}
+          </div>
           <p className="product-detail__description">{product.description}</p>
 
           <button
@@ -80,6 +90,7 @@ export default function ProductDetail() {
           <p className="product-detail__note"><Check size={15} /> Selección TechStore: tecnología pensada para durar.</p>
         </div>
       </div>
+      <ProductReviews reviews={product.reviews} />
     </section>
   );
 }
